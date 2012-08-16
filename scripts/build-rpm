@@ -1,0 +1,12 @@
+#!/bin/sh
+
+VERSION=$1
+
+if [ -z $VERSION ]
+then
+  echo "Must pass VERSION argument."
+  exit 1
+fi
+
+tar --transform="s#source/#mod_ranged-${VERSION}/#" -cvzf /home/$USER/rpmbuild/SOURCES/mod_ranged-${VERSION}.tar.gz source/
+rpmbuild -bb mod_ranged.spec

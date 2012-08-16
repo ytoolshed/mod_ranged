@@ -11,7 +11,7 @@ Source:         %{name}-%{version}.tar.gz
 Obsoletes: mod_ranged <= %{version}-%{release}
 Provides: mod_ranged = %{version}-%{release}
 
-Requires: httpd
+Requires: httpd libcrange
 BuildRequires: libcrange httpd-devel
 
 Summary:        Something.
@@ -22,9 +22,10 @@ Hi.
 %prep
 
 %build
-apxs -c mod_ranged.c -lcrange
+apxs -c $RPM_BUILD_ROOT/mod_ranged.c -lcrange
 
 %install
+apxs -i $RPM_BUILD_ROOT/mod_ranged.so
 
 %clean
 %{__rm} -rf %{buildroot}
