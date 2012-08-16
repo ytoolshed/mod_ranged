@@ -3,29 +3,30 @@ Version:        1.0.0
 Release:        1%{?dist}
 Group:          System/Base
 License:        BSD
-BuildRoot:      %{_tmppath}/%{name}-%{version}-build
-
-Url:            https://github.com/imeyer/mod_ranged
+BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+Url:            https://github.com/ytoolshed/mod_ranged
 Source:         %{name}-%{version}.tar.gz
 
 Obsoletes: mod_ranged <= %{version}-%{release}
 Provides: mod_ranged = %{version}-%{release}
 
-Requires: httpd libcrange
-BuildRequires: libcrange httpd-devel
+Requires: httpd libcrange perl
+BuildRequires: libcrange httpd-devel perl
 
-Summary:        Something.
+Summary: Apache module interface to libcrange
 
 %description
-Hi.
+Apache module interface to libcrange
 
 %prep
+%setup -q
 
 %build
-apxs -c $RPM_BUILD_ROOT/mod_ranged.c -lcrange
+apxs -c mod_ranged.c -lcrange $(perl -MExtUtils::Embed -e ldopts)
 
 %install
-apxs -i $RPM_BUILD_ROOT/mod_ranged.so
+install -Dp mod_ranged.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/mod_ranged.conf
+install -Dp .libs/mod_ranged.so %{buildroot}%{_libdir}/httpd/modules/mod_ranged.so
 
 %clean
 %{__rm} -rf %{buildroot}
@@ -37,6 +38,8 @@ apxs -i $RPM_BUILD_ROOT/mod_ranged.so
 %postun
 
 %files
+%config(noreplace) %{_sysconfdir}/httpd/conf.d/mod_ranged.conf
+%{_libdir}/httpd/modules/mod_ranged.so
 
 %changelog
 * Mon Aug 6 2012 ianmmeyer@gmail.com
