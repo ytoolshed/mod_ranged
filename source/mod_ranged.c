@@ -115,7 +115,8 @@ static int range_handler(request_rec * r)
     }
 
     if (strcmp(r->path_info, "/version") == 0) {
-        ap_rputs("%s\n", version, r);
+        ap_rputs(version, r);
+        ap_rputc("\n", r);
         return OK;
     }
 
