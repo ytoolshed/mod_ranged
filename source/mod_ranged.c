@@ -97,6 +97,7 @@ static int range_handler(request_rec * r)
 {
     range_request *rr;
     char *range;
+    const char *version = "1.0.2";
     int wants_list = 0;
     int wants_expand = 0;
     int warn = 0;
@@ -111,6 +112,11 @@ static int range_handler(request_rec * r)
 
     if (r->method_number != M_GET && r->method_number != M_POST) {
         return HTTP_METHOD_NOT_ALLOWED;
+    }
+
+    if (strcmp(r->path_info, "/version") == 0) {
+        ap_rputs("%s\n", version, r);
+        return OK;
     }
 
     wants_list = strcmp(r->path_info, "/list") == 0;
