@@ -144,16 +144,6 @@ static int range_handler(request_rec * r)
     gettimeofday(&end_t, NULL);
     timeval_subtract(&diff_t, &end_t, &t);
 
-    if (log_requests) {
-        double diff;
-        diff = end_t.tv_sec * 1000000.0 + end_t.tv_usec -
-            (t.tv_sec * 1000000.0 + t.tv_usec);
-
-        diff /= 1E6;
-        ap_log_rerror(APLOG_MARK, APLOG_NOTICE, 0, r,
-                      "%s -- %0.3fs", range, diff);
-    }
-
     if (range_request_has_warnings(rr)) {
         warn = 1;
         const char *warnings = range_request_warnings(rr);
@@ -166,7 +156,19 @@ static int range_handler(request_rec * r)
 
         apr_table_t *headers = r->err_headers_out;
         apr_table_add(headers, "RangeException", header);
+        ap_log_rerror(APLOG_MARK, APLOG_NOTICE, 0, r,
+                      "RangeException for %s: %s", range, header);
         return HTTP_INTERNAL_SERVER_ERROR;
+    }
+
+    if (log_requests) {
+        double diff;
+        diff = end_t.tv_sec * 1000000.0 + end_t.tv_usec -
+            (t.tv_sec * 1000000.0 + t.tv_usec);
+
+        diff /= 1E6;
+        ap_log_rerror(APLOG_MARK, APLOG_NOTICE, 0, r,
+                      "%s -- %0.3fs", range, diff);
     }
 
     if (wants_list) {
