@@ -121,7 +121,7 @@ static int range_handler(request_rec * r)
     if (!wants_list && !wants_expand)
         return DECLINED;
 
-    if (log_requests /*|| log_lwes*/ || !time_started) {
+    if (log_requests || !time_started) {
         gettimeofday(&t, NULL);
         if (!time_started)
             time_started = t.tv_sec;
@@ -164,7 +164,7 @@ static int range_handler(request_rec * r)
             header[2047] = '\0';
         }
 
-        apr_table_t *headers = r->headers_out;
+        apr_table_t *headers = r->err_headers_out;
         apr_table_add(headers, "RangeException", header);
         return HTTP_INTERNAL_SERVER_ERROR;
     }
